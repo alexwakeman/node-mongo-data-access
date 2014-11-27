@@ -1,7 +1,7 @@
 Mongo DB interface for Node.js applications
 
 
-Provides Q promise queries (asynchronous data access), synchronous queries, authentication, and generally a friendly interface.
+Provides Q promise queries (chaining async operations), authentication, and generally a friendly interface.
 
 == usage ==
 
