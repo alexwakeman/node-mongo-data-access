@@ -7,11 +7,11 @@ Provides Q promise queries (asynchronous data access), synchronous queries, auth
 
 To be used inside your Express server routes
 
-var MongoDataAccess = require('../data-access/mongo’);
+	var MongoDataAccess = require('../data-access/mongo’);
 
-var db = new MongoDataAccess(); // create instance of this singleton
+	var db = new MongoDataAccess(); // create instance of this singleton
 
-db.connect(dbAddress); // connect database
+	db.connect(dbAddress); // connect database
 
 
 Using Q for async promises:
