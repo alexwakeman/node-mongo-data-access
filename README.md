@@ -37,11 +37,13 @@ Using Q for async promises:
             });
 
 // POST
+
 	var input = req.body;
 
 	db.addEntry('publishers', input);
 
 // PUT
+
 	db.updateEntry('publishers', req.params.id, input, function(error) {
             if (error) {
 
