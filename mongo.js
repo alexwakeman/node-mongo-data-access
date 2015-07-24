@@ -1,34 +1,37 @@
-
+"use strict";
 /*
-    Singleton class to ensure database access limited to one connection and instance
+ Singleton class to ensure database access limited to one connection and instance
 
  */
 var MongoDataAccess = module.exports = function () {
-    "use strict";
 
     return MongoDataAccess.prototype.getInstance();
 };
 
-MongoDataAccess.prototype = (function() {
+MongoDataAccess.prototype = (function () {
 
     // private variables (use get & set if required)
     var _db, // maintain persistent reference to mongo DB
         _mongoClient = require('mongodb').MongoClient,
         q = require('q'),
-        _callback = function(err, data) {
+        _callback = function (err, data) {
             if (err) throw err;
             return data;
         };
 
     return {
 
-        connect: function(settings) {
-        
-        	var host = settings.host,
-        		user = settings.user,
-        		pass = settings.password;
+        connect: function (settings) {
 
-            _mongoClient.connect(host, function(err, db) {
+            if (!settings || typeof settings !== 'object') throw new Error('Setting argument must be an object { host: \'http://my.mongo.host:8899\' }');
+
+            var host = settings.host,
+                user = settings.user,
+                pass = settings.password;
+
+            if (!host) throw new Error('Host is required!');
+
+            _mongoClient.connect(host, function (err, db) {
 
                 if (err) throw err;
                 _db = db;
@@ -36,42 +39,42 @@ MongoDataAccess.prototype = (function() {
 
                 if (user) {
 
-                    _db.authenticate(user, pass , function(err) {
-                        if(err) console.log("Unable to authenticate MongoDB!");
+                    _db.authenticate(user, pass, function (err) {
+                        if (err) console.log("Unable to authenticate MongoDB!");
                     });
                 }
             });
         },
 
-        disconnect: function() {
+        disconnect: function () {
             _db.close();
         },
 
-        addEntry: function(collectionName, doc, callback) {
+        addEntry: function (collectionName, doc, callback) {
 
             if (!callback) callback = _callback;
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
-                collection.insert(doc, {w:1}, callback);
+                collection.insert(doc, {w: 1}, callback);
             });
         },
 
-        findAll: function(collectionName, callback) {
+        findAll: function (collectionName, callback) {
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
                 collection.find().toArray(callback);
             });
         },
 
-        promiseFindAll: function(collectionName) {
+        promiseFindAll: function (collectionName) {
 
             var deferred = q.defer();
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
-                collection.find().toArray(function(err, data) {
+                collection.find().toArray(function (err, data) {
 
                     if (err) deferred.reject(err);
                     else deferred.resolve(data);
@@ -81,26 +84,26 @@ MongoDataAccess.prototype = (function() {
             return deferred.promise;
         },
 
-        findById: function(collectionName, id, callback) { // callback(err, item)
+        findById: function (collectionName, id, callback) { // callback(err, item)
 
             if (!callback) {
                 console.error('Callback is required for findById.');
                 return false;
             }
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
-                collection.findOne({ _id: _db.bson_serializer.ObjectID.createFromHexString(id) }, callback);
+                collection.findOne({_id: _db.bson_serializer.ObjectID.createFromHexString(id)}, callback);
             });
         },
 
-        promiseFindById: function(collectionName, id) {
+        promiseFindById: function (collectionName, id) {
 
             var deferred = q.defer();
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
-                collection.findOne({ _id: _db.bson_serializer.ObjectID.createFromHexString(id) }, function(err, data) {
+                collection.findOne({_id: _db.bson_serializer.ObjectID.createFromHexString(id)}, function (err, data) {
 
                     // finish promise process
                     if (err) deferred.reject(err);
@@ -111,14 +114,14 @@ MongoDataAccess.prototype = (function() {
             return deferred.promise;
         },
 
-        promiseFindOneByObject: function(collectionName, whereObj) {
+        promiseFindOneByObject: function (collectionName, whereObj) {
 
             // create promise object to return to caller
             var deferred = q.defer();
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
-                collection.findOne(whereObj, function(err, data) {
+                collection.findOne(whereObj, function (err, data) {
 
                     // finish promise process
                     if (err) deferred.reject(err);
@@ -129,30 +132,30 @@ MongoDataAccess.prototype = (function() {
             return deferred.promise;
         },
 
-        findOneByObject: function(collectionName, whereObj, callback) { // callback(err, item)
+        findOneByObject: function (collectionName, whereObj, callback) { // callback(err, item)
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
                 collection.findOne(whereObj, callback);
             });
         },
 
-        findAllByObject: function(collectionName, whereObj, callback) { // callback(err, item)
+        findAllByObject: function (collectionName, whereObj, callback) { // callback(err, item)
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
                 collection.find(whereObj).toArray(callback);
             });
         },
 
-        promiseFindAllByObject: function(collectionName, whereObj) {
+        promiseFindAllByObject: function (collectionName, whereObj) {
 
             // create promise object to return to caller
             var deferred = q.defer();
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
-                collection.find(whereObj).toArray(function(err, data) {
+                collection.find(whereObj).toArray(function (err, data) {
 
                     // finish promise process
                     if (err) deferred.reject(err);
@@ -163,18 +166,18 @@ MongoDataAccess.prototype = (function() {
             return deferred.promise;
         },
 
-        updateEntry: function(collectionName, id, doc, callback) {
+        updateEntry: function (collectionName, id, doc, callback) {
 
             // cannot update if _id property is present in document
             if (doc._id) {
                 delete doc._id;
             }
 
-            _db.collection(collectionName, function(err, collection) {
+            _db.collection(collectionName, function (err, collection) {
 
                 collection.update(
-                    { _id: _db.bson_serializer.ObjectID.createFromHexString(id) },
-                    { '$set': doc },
+                    {_id: _db.bson_serializer.ObjectID.createFromHexString(id)},
+                    {'$set': doc},
                     callback
                 );
             });
@@ -183,14 +186,14 @@ MongoDataAccess.prototype = (function() {
             return id;
         },
 
-        removeEntry: function(collectionName, id, callback) {
+        removeEntry: function (collectionName, id, callback) {
 
-            _db.collection(collectionName, function(err, collection) {
-                collection.remove({ _id: _db.bson_serializer.ObjectID.createFromHexString(id) }, callback)
+            _db.collection(collectionName, function (err, collection) {
+                collection.remove({_id: _db.bson_serializer.ObjectID.createFromHexString(id)}, callback)
             });
         },
 
-        getInstance: function() {
+        getInstance: function () {
 
             if (typeof MongoDataAccess.prototype.instance === undefined) {
                 MongoDataAccess.prototype.instance = new MongoDataAccess();
