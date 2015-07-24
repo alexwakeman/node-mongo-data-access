@@ -3,15 +3,15 @@
 
     - MongoDataAccess requires npm packages mongodb & _q to be installed
 
-    - MongoDataAccess callbacks only need to have one argument as error handling is within MongoDataAccess e.g. 
+    - MongoDataAccess callbacks only need to have one argument as error handling is within MongoDataAccess e.g.
 
-    function(document) { 
-        if (document) doStuff(); 
+    function(document) {
+        if (document) doStuff();
     }
-    
+
  */
 
-"use strict";
+'use strict';
 
 var MongoDataAccess = module.exports = function () {
 
