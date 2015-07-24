@@ -1,7 +1,7 @@
 /*
     - MongoDataAccess is a singleton class to ensure database access limited to one connection and instance.
 
-    - MongoDataAccess requires npm packages mongodb & _q to be installed
+    - MongoDataAccess requires npm packages `mongodb` & `q` to be installed
 
     - MongoDataAccess callbacks only need to have one argument as error handling is within MongoDataAccess e.g.
 
