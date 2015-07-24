@@ -11,7 +11,7 @@ To be used inside your Express server routes
 
 	var db = new MongoDataAccess(); // create instance of this singleton
 
-	db.connect(dbAddress); // connect database
+	db.connect({host: 'http://my.mongo.host:8800/'}); // connect to database
 
 
 Using Q for async promises:
