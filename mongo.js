@@ -18,8 +18,7 @@ MongoDataAccess.prototype = (function() {
         _callback = function(err, data) {
             if (err) throw err;
             return data;
-        },
-        app = GLOBAL.app;
+        };
 
     return {
 
