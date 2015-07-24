@@ -19,7 +19,7 @@ MongoDataAccess.prototype = (function () {
     // private variables (use get & set if required)
     var _db, // maintain persistent reference to Mongo DB
         _mongoClient = require('mongodb').MongoClient,
-        _q = require('_q'),
+        _q = require('q'),
         _callback = function (err, data) {
             if (err) console.error(err);
             return data;
