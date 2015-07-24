@@ -4,7 +4,7 @@
 
   - MongoDataAccess requires npm packages mongodb & _q to be installed
 
-  - MongoDataAccess callbacks only need to have one argument e.g. function(document) { }, as error handling is within MongoDataAccess 
+  - MongoDataAccess callbacks only need to have one argument e.g. function(document) { }, as error handling is within MongoDataAccess
  */
 
 "use strict";
@@ -29,7 +29,7 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param settings {object} an object specifying the parameters for the Mongo connection { host: 'http://localhost:27017' [, user: 'admin', pass: 'admin' ] }
+         * @param settings {Object} specifies the parameters for the Mongo connection { host: 'http://localhost:27017' [, user: 'admin', pass: 'admin' ] }
          */
         connect: function (settings) {
 
@@ -37,7 +37,7 @@ MongoDataAccess.prototype = (function () {
 
             var host = settings.host,
                 user = settings.user,
-                pass = settings.password;
+                pass = settings.pass || settings.password;
 
             if (!host) throw new Error('Host is required!');
 
@@ -46,7 +46,7 @@ MongoDataAccess.prototype = (function () {
                 if (err) throw err;
                 _db = db;
 
-                if (user) {
+                if (user && pass) {
                     _db.authenticate(user, pass, function (err) {
                         if (err) console.log('Unable to authenticate MongoDB!');
                     });
@@ -63,9 +63,9 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param doc {object} the document to store in the collection
-         * @param callback {function} passes the success object from Mongo to the callee
+         * @param collectionName {String} name of the Mongo collection
+         * @param doc {Object} the document to store in the collection
+         * @param callback {Function} passes the success object from Mongo to the callee
          */
         addEntry: function (collectionName, doc, callback) {
 
@@ -82,8 +82,8 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param callback {function} passes the success object from Mongo to the callee
+         * @param collectionName {String} name of the Mongo collection
+         * @param callback {Function} passes the success object from Mongo to the callee
          */
         findAll: function (collectionName, callback) {
 
@@ -98,7 +98,7 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
+         * @param collectionName {String} name of the Mongo collection
          * @returns {*|promise} q promise object to await async process returning
          */
         promiseFindAll: function (collectionName) {
@@ -119,9 +119,9 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param id {string} Mongo id string (hexadecimal)
-         * @param callback {function} passes the success object from Mongo to the callee
+         * @param collectionName {String} name of the Mongo collection
+         * @param id {String} Mongo id string (hexadecimal)
+         * @param callback {Function} passes the success object from Mongo to the callee
          */
         findById: function (collectionName, id, callback) { // callback(err, item)
 
@@ -136,8 +136,8 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param id {string} Mongo id string (hexadecimal)
+         * @param collectionName {String} name of the Mongo collection
+         * @param id {String} Mongo id string (hexadecimal)
          * @returns {*|promise} q promise object to await async process returning
          */
         promiseFindById: function (collectionName, id) {
@@ -159,8 +159,8 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param whereObj {object} a MongoClient query object
+         * @param collectionName {String} name of the Mongo collection
+         * @param whereObj {Object} a MongoClient query object
          * @returns {*|promise} q promise object to await async process returning
          */
         promiseFindOneByObject: function (collectionName, whereObj) {
@@ -183,9 +183,9 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param whereObj {object} a MongoClient query object
-         * @param callback {function} passes the success object from Mongo to the callee
+         * @param collectionName {String} name of the Mongo collection
+         * @param whereObj {Object} a MongoClient query object
+         * @param callback {Function} passes the success object from Mongo to the callee
          */
         findOneByObject: function (collectionName, whereObj, callback) { // callback(err, item)
 
@@ -200,9 +200,9 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param whereObj {object} a MongoClient query object
-         * @param callback {function} passes the success object from Mongo to the callee
+         * @param collectionName {String} name of the Mongo collection
+         * @param whereObj {Object} a MongoClient query object
+         * @param callback {Function} passes the success object from Mongo to the callee
          */
         findAllByObject: function (collectionName, whereObj, callback) { // callback(err, item)
 
@@ -217,8 +217,8 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param whereObj {object} a MongoClient query object
+         * @param collectionName {String} name of the Mongo collection
+         * @param whereObj {Object} a MongoClient query object
          * @returns {*|promise} q promise object to await async process returning
          */
         promiseFindAllByObject: function (collectionName, whereObj) {
@@ -241,11 +241,11 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param id {string} Mongo id string (hexadecimal)
-         * @param doc {object} the document to store in the collection
-         * @param callback {function} passes the success object from Mongo to the callee
-         * @returns {string} the id of the updated document for convenience
+         * @param collectionName {String} name of the Mongo collection
+         * @param id {String} Mongo id string (hexadecimal)
+         * @param doc {Object} the document to store in the collection
+         * @param callback {Function} passes the success object from Mongo to the callee
+         * @returns {String} the id of the updated document for convenience
          */
         updateEntry: function (collectionName, id, doc, callback) {
 
@@ -272,9 +272,9 @@ MongoDataAccess.prototype = (function () {
 
         /**
          *
-         * @param collectionName {string} name of the Mongo collection
-         * @param id {string} Mongo id string (hexadecimal)
-         * @param callback {function} passes the success object from Mongo to the callee
+         * @param collectionName {String} name of the Mongo collection
+         * @param id {String} Mongo id string (hexadecimal)
+         * @param callback {Function} passes the success object from Mongo to the callee
          */
         removeEntry: function (collectionName, id, callback) {
 
