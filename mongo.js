@@ -1,10 +1,14 @@
-
 /*
-  - MongoDataAccess is a singleton class to ensure database access limited to one connection and instance.
+    - MongoDataAccess is a singleton class to ensure database access limited to one connection and instance.
 
-  - MongoDataAccess requires npm packages mongodb & _q to be installed
+    - MongoDataAccess requires npm packages mongodb & _q to be installed
 
-  - MongoDataAccess callbacks only need to have one argument e.g. function(document) { }, as error handling is within MongoDataAccess
+    - MongoDataAccess callbacks only need to have one argument as error handling is within MongoDataAccess e.g. 
+
+    function(document) { 
+        if (document) doStuff(); 
+    }
+    
  */
 
 "use strict";
@@ -16,11 +20,11 @@ var MongoDataAccess = module.exports = function () {
 
 MongoDataAccess.prototype = (function () {
 
-    // private variables (use get & set if required)
+    // private variables
     var _db, // maintain persistent reference to Mongo DB
         _mongoClient = require('mongodb').MongoClient,
         _q = require('q'),
-        _callback = function (err, data) {
+        _callback = function (err, data) { // re-usable fake callback function used when one is not necessary from the callee (e.g. deletions)
             if (err) console.error(err);
             return data;
         };
