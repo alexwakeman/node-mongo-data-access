@@ -3,13 +3,13 @@
     Singleton class to ensure database access limited to one connection and instance
 
  */
-var Niu = module.exports = function () {
+var MongoDataAccess = module.exports = function () {
     "use strict";
 
-    return Niu.prototype.getInstance();
+    return MongoDataAccess.prototype.getInstance();
 };
 
-Niu.prototype = (function() {
+MongoDataAccess.prototype = (function() {
 
     // private variables (use get & set if required)
     var _db, // maintain persistent reference to mongo DB
@@ -23,7 +23,11 @@ Niu.prototype = (function() {
 
     return {
 
-        connect: function(host) {
+        connect: function(settings) {
+        
+        	var host = settings.host,
+        		user = settings.user,
+        		pass = settings.password;
 
             _mongoClient.connect(host, function(err, db) {
 
@@ -31,9 +35,9 @@ Niu.prototype = (function() {
                 _db = db;
 
 
-                if (app.get('env') === GLOBAL.config.PRODUCTION) {
+                if (user) {
 
-                    _db.authenticate(GLOBAL.config.MONGO_USER, GLOBAL.config.MONGO_PASS , function(err) {
+                    _db.authenticate(user, pass , function(err) {
                         if(err) console.log("Unable to authenticate MongoDB!");
                     });
                 }
@@ -189,10 +193,10 @@ Niu.prototype = (function() {
 
         getInstance: function() {
 
-            if (typeof Niu.prototype.instance === undefined) {
-                Niu.prototype.instance = new Niu();
+            if (typeof MongoDataAccess.prototype.instance === undefined) {
+                MongoDataAccess.prototype.instance = new MongoDataAccess();
             }
-            return Niu.prototype.instance;
+            return MongoDataAccess.prototype.instance;
         }
     }
 })();
