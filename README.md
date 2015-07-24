@@ -5,7 +5,6 @@ Provides Q promise queries (chaining async operations), authentication, and gene
 
 == usage ==
 
-To be used inside your Express server routes
 
 	var MongoDataAccess = require('../data-access/mongo’);
 
