@@ -22,7 +22,9 @@ MongoDataAccess.prototype = (function () {
 
     // private variables
     var _db, // maintain persistent reference to Mongo DB
-        _mongoClient = require('mongodb').MongoClient,
+        _mongo = require('mongodb'),
+        _mongoClient = _mongo.MongoClient,
+        _ObjectID = _mongo.ObjectID,
         _q = require('q'),
         _callback = function (err, data) { // re-usable fake callback function used when one is not necessary from the callee (e.g. deletions)
             if (err) console.error(err);
@@ -56,6 +58,8 @@ MongoDataAccess.prototype = (function () {
                     });
                 }
             });
+
+            return MongoDataAccess.prototype.getInstance(); // for convenience and syntax sugar
         },
 
         /**
@@ -131,7 +135,8 @@ MongoDataAccess.prototype = (function () {
 
             _db.collection(collectionName, function (err, collection) {
 
-                collection.findOne({ _id: _db.bson_serializer.ObjectID.createFromHexString(id) }, function(err, success) {
+                var oId = new _ObjectID(id); // generate a binary of id
+                collection.findOne(oId, function(err, success) {
                     if (err) console.error(err);
                     callback(success);
                 });
@@ -150,7 +155,9 @@ MongoDataAccess.prototype = (function () {
 
             _db.collection(collectionName, function (err, collection) {
 
-                collection.findOne({ _id: _db.bson_serializer.ObjectID.createFromHexString(id) }, function (err, data) {
+                var oId = new _ObjectID(id); // generate a binary of id
+
+                collection.findOne(oId, function (err, data) {
 
                     // finish promise process
                     if (err) deferred.reject(err);
@@ -260,8 +267,12 @@ MongoDataAccess.prototype = (function () {
 
             _db.collection(collectionName, function (err, collection) {
 
+                if (err) return callback(false);
+
+                var oId = new _ObjectID(id); // generate a binary of id
+
                 collection.update(
-                    { _id: _db.bson_serializer.ObjectID.createFromHexString(id) },
+                    oId,
                     { '$set': doc },
                     function(err, success) {
                         if (err) console.error(err);
@@ -283,7 +294,12 @@ MongoDataAccess.prototype = (function () {
         removeEntry: function (collectionName, id, callback) {
 
             _db.collection(collectionName, function (err, collection) {
-                collection.remove({ _id: _db.bson_serializer.ObjectID.createFromHexString(id) }, function(err, success) {
+
+                if (err) return callback(false);
+
+                var oId = new _ObjectID(id); // generate a binary of id
+
+                collection.remove(oId, function(err, success) {
                     if (err) console.error(err);
                     callback(success);
                 })
