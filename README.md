@@ -6,9 +6,12 @@ Provides Q promise queries (chaining async operations), authentication, and gene
 == usage ==
 
 ```js
-var MongoDataAccess = require('../data-access/mongo’);
+var MongoDataAccess = require('../utils/mongo-data-access'); // require module
+var db = new MongoDataAccess(); // initialize
+db.connect({host: 'mongodb://127.0.0.1:27017/myDatabase'}); // connect to database
+db.find('users', { email: 'user@mycompany.com' }, 1) // on `users` collection, look for doc with email: user@mycompany.com, limit the number of docs to 1
+  .then((userDoc) => process(userDoc))
+  .catch((error) => throw error);
+  
 
-var db = new MongoDataAccess(); // create instance of this singleton
-
-db.connect({host: 'http://my.mongo.host:8800/'}); // connect to database
 ```
